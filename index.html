@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --cream: #FBF7F2;
+      --paper: #FFFEFA;
+      --ink: #2C2825;
+      --ink-light: #5C5856;
+      --terracotta: #C4745A;
+      --terracotta-soft: #E8D5CF;
+      --sage: #8B9E82;
+      --sage-soft: #D4DDD0;
+      --amber: #D4A853;
+      --amber-soft: #F5ECD7;
+      --shadow: rgba(44, 40, 37, 0.08);
+      --shadow-hover: rgba(44, 40, 37, 0.14);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      min-height: 100vh;
+      background-image:
+        radial-gradient(ellipse at 20% 30%, rgba(212, 168, 83, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, rgba(139, 158, 130, 0.08) 0%, transparent 50%);
+    }
+
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    header h1 {
+      font-family: 'Crimson Pro', serif;
+      font-size: 2.8rem;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+
+    .date-display {
+      font-size: 0.95rem;
+      color: var(--ink-light);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 320px 1fr 340px;
+      gap: 28px;
+      align-items: start;
+    }
+
+    .left-column {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .panel {
+      background: var(--paper);
+      border-radius: 16px;
+      box-shadow: 0 2px 20px var(--shadow), 0 0 0 1px rgba(44, 40, 37, 0.03);
+      overflow: hidden;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .panel:hover {
+      box-shadow: 0 4px 32px var(--shadow-hover), 0 0 0 1px rgba(44, 40, 37, 0.05);
+    }
+
+    .panel-header {
+      padding: 24px 28px 20px;
+      border-bottom: 1px solid rgba(44, 40, 37, 0.06);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .panel-header h2 {
+      font-family: 'Crimson Pro', serif;
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--ink);
+      flex: 1;
+    }
+
+    .panel-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    /* Calendar Styles */
+    .calendar-panel .panel-icon {
+      background: var(--amber-soft);
+    }
+
+    .calendar {
+      padding: 20px 24px 24px;
+    }
+
+    .calendar-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .calendar-nav button {
+      width: 36px;
+      height: 36px;
+      border: none;
+      background: var(--cream);
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      color: var(--ink-light);
+      transition: all 0.2s ease;
+    }
+
+    .calendar-nav button:hover {
+      background: var(--terracotta-soft);
+      color: var(--terracotta);
+    }
+
+    .calendar-month {
+      font-family: 'Crimson Pro', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+
+    .calendar-day-name {
+      text-align: center;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--ink-light);
+      padding: 8px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .calendar-day {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: var(--ink);
+    }
+
+    .calendar-day:hover {
+      background: var(--cream);
+    }
+
+    .calendar-day.other-month {
+      color: rgba(44, 40, 37, 0.25);
+    }
+
+    .calendar-day.today {
+      background: var(--terracotta);
+      color: white;
+      font-weight: 600;
+    }
+
+    .calendar-day.today:hover {
+      background: var(--terracotta);
+      transform: scale(1.1);
+    }
+
+    .calendar-day.selected {
+      background: var(--sage-soft);
+      color: var(--ink);
+    }
+
+    .calendar-day.has-todos {
+      position: relative;
+    }
+
+    .calendar-day.has-todos::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 5px;
+      height: 5px;
+      background: var(--terracotta);
+      border-radius: 50%;
+    }
+
+    .calendar-day.today.has-todos::after {
+      background: white;
+    }
+
+    .time-display {
+      text-align: center;
+      padding: 20px;
+      border-top: 1px solid rgba(44, 40, 37, 0.06);
+      margin-top: 8px;
+    }
+
+    .time {
+      font-family: 'Crimson Pro', serif;
+      font-size: 2.2rem;
+      font-weight: 400;
+      color: var(--ink);
+      letter-spacing: 0.02em;
+    }
+
+    .time-label {
+      font-size: 0.75rem;
+      color: var(--ink-light);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 4px;
+    }
+
+    /* Classes Panel */
+    .classes-panel .panel-icon {
+      background: #E8E0F0;
+    }
+
+    .classes-content {
+      padding: 16px 20px;
+    }
+
+    .add-class-form {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .add-class-input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid rgba(44, 40, 37, 0.1);
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      background: var(--cream);
+    }
+
+    .add-class-input:focus {
+      outline: none;
+      border-color: var(--terracotta);
+    }
+
+    .add-class-btn {
+      padding: 10px 16px;
+      background: var(--ink);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .add-class-btn:hover {
+      background: var(--ink-light);
+    }
+
+    .class-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .class-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--cream);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .class-item:hover {
+      background: #F0EBE5;
+    }
+
+    .class-item.active {
+      background: var(--ink);
+      color: white;
+    }
+
+    .class-color {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .class-name {
+      flex: 1;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .class-count {
+      font-size: 0.75rem;
+      opacity: 0.6;
+    }
+
+    .class-delete {
+      width: 22px;
+      height: 22px;
+      border: none;
+      background: transparent;
+      color: inherit;
+      opacity: 0;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .class-item:hover .class-delete {
+      opacity: 0.5;
+    }
+
+    .class-delete:hover {
+      opacity: 1 !important;
+      background: rgba(196, 116, 90, 0.2);
+    }
+
+    .class-item.active .class-delete:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .no-classes {
+      text-align: center;
+      padding: 20px;
+      color: var(--ink-light);
+      font-size: 0.85rem;
+    }
+
+    /* Color Picker */
+    .color-picker {
+      display: flex;
+      gap: 6px;
+      padding: 12px 0;
+      flex-wrap: wrap;
+    }
+
+    .color-option {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .color-option:hover {
+      transform: scale(1.15);
+    }
+
+    .color-option.selected {
+      border-color: var(--ink);
+      transform: scale(1.1);
+    }
+
+    /* Todo Styles */
+    .todo-panel {
+      min-height: 580px;
+    }
+
+    .todo-panel .panel-icon {
+      background: var(--terracotta-soft);
+    }
+
+    .todo-filters {
+      display: flex;
+      gap: 8px;
+      padding: 16px 28px;
+      border-bottom: 1px solid rgba(44, 40, 37, 0.06);
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 8px 14px;
+      border: 1px solid rgba(44, 40, 37, 0.1);
+      background: var(--paper);
+      border-radius: 20px;
+      font-family: inherit;
+      font-size: 0.8rem;
+      color: var(--ink-light);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--ink-light);
+      color: var(--ink);
+    }
+
+    .filter-btn.active {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: white;
+    }
+
+    .filter-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .todo-input-wrapper {
+      padding: 20px 28px;
+      border-bottom: 1px solid rgba(44, 40, 37, 0.06);
+    }
+
+    .todo-input-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .todo-input-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .todo-input {
+      flex: 1;
+      padding: 14px 18px;
+      border: 1px solid rgba(44, 40, 37, 0.1);
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      background: var(--cream);
+      color: var(--ink);
+      transition: all 0.2s ease;
+    }
+
+    .todo-input:focus {
+      outline: none;
+      border-color: var(--terracotta);
+      background: var(--paper);
+      box-shadow: 0 0 0 3px var(--terracotta-soft);
+    }
+
+    .todo-input::placeholder {
+      color: var(--ink-light);
+    }
+
+    .class-select {
+      padding: 14px 18px;
+      border: 1px solid rgba(44, 40, 37, 0.1);
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      background: var(--cream);
+      color: var(--ink);
+      cursor: pointer;
+      min-width: 160px;
+    }
+
+    .class-select:focus {
+      outline: none;
+      border-color: var(--terracotta);
+    }
+
+    .add-btn {
+      padding: 14px 24px;
+      background: var(--terracotta);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .add-btn:hover {
+      background: #B5654B;
+      transform: translateY(-1px);
+    }
+
+    .todo-list {
+      padding: 12px 20px 24px;
+      max-height: 380px;
+      overflow-y: auto;
+    }
+
+    .todo-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .todo-list::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .todo-list::-webkit-scrollbar-thumb {
+      background: rgba(44, 40, 37, 0.15);
+      border-radius: 3px;
+    }
+
+    .todo-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px;
+      margin: 8px 0;
+      background: var(--paper);
+      border: 1px solid rgba(44, 40, 37, 0.06);
+      border-radius: 12px;
+      transition: all 0.25s ease;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .todo-item:hover {
+      border-color: rgba(44, 40, 37, 0.12);
+      box-shadow: 0 2px 12px var(--shadow);
+    }
+
+    .todo-item.highlighted {
+      background: var(--amber-soft);
+      border-color: var(--amber);
+    }
+
+    .todo-item.completed .todo-text {
+      text-decoration: line-through;
+      color: var(--ink-light);
+    }
+
+    .todo-item.completed .todo-class-tag {
+      opacity: 0.5;
+    }
+
+    .todo-checkbox {
+      width: 22px;
+      height: 22px;
+      border: 2px solid rgba(44, 40, 37, 0.2);
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .todo-checkbox:hover {
+      border-color: var(--sage);
+    }
+
+    .todo-item.completed .todo-checkbox {
+      background: var(--sage);
+      border-color: var(--sage);
+    }
+
+    .todo-checkbox::after {
+      content: '✓';
+      font-size: 0.8rem;
+      color: white;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.2s ease;
+    }
+
+    .todo-item.completed .todo-checkbox::after {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .todo-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .todo-text {
+      font-size: 0.95rem;
+      color: var(--ink);
+      word-break: break-word;
+    }
+
+    .todo-class-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      width: fit-content;
+    }
+
+    .todo-class-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .todo-text-input {
+      flex: 1;
+      padding: 6px 10px;
+      border: 1px solid var(--terracotta);
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      background: white;
+    }
+
+    .todo-text-input:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--terracotta-soft);
+    }
+
+    .todo-actions {
+      display: flex;
+      gap: 6px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .todo-item:hover .todo-actions {
+      opacity: 1;
+    }
+
+    .todo-action-btn {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: var(--cream);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .todo-action-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .todo-action-btn.highlight:hover {
+      background: var(--amber-soft);
+    }
+
+    .todo-action-btn.edit:hover {
+      background: var(--sage-soft);
+    }
+
+    .todo-action-btn.delete:hover {
+      background: var(--terracotta-soft);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--ink-light);
+    }
+
+    .empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    .empty-state p {
+      font-size: 0.95rem;
+    }
+
+    /* Notepad Styles */
+    .notepad-panel .panel-icon {
+      background: var(--sage-soft);
+    }
+
+    .notepad {
+      padding: 0;
+    }
+
+    .notepad-textarea {
+      width: 100%;
+      min-height: 480px;
+      padding: 24px 28px;
+      border: none;
+      font-family: 'Crimson Pro', serif;
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--ink);
+      background: transparent;
+      resize: none;
+      background-image: repeating-linear-gradient(
+        transparent,
+        transparent 31px,
+        rgba(44, 40, 37, 0.05) 31px,
+        rgba(44, 40, 37, 0.05) 32px
+      );
+      background-position-y: 23px;
+    }
+
+    .notepad-textarea:focus {
+      outline: none;
+    }
+
+    .notepad-textarea::placeholder {
+      color: var(--ink-light);
+      font-style: italic;
+    }
+
+    .notepad-footer {
+      padding: 16px 24px;
+      border-top: 1px solid rgba(44, 40, 37, 0.06);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .char-count {
+      font-size: 0.8rem;
+      color: var(--ink-light);
+    }
+
+    .save-indicator {
+      font-size: 0.8rem;
+      color: var(--sage);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .main-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .left-column {
+        grid-column: 1 / -1;
+        flex-direction: row;
+      }
+
+      .left-column > .panel {
+        flex: 1;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .left-column {
+        flex-direction: column;
+      }
+
+      header h1 {
+        font-size: 2.2rem;
+      }
+
+      .container {
+        padding: 24px 16px;
+      }
+
+      .todo-input-row {
+        flex-direction: column;
+      }
+
+      .class-select {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Student Planner</h1>
+      <div class="date-display" id="headerDate"></div>
+    </header>
+
+    <div class="main-grid">
+      <!-- Left Column: Calendar + Classes -->
+      <div class="left-column">
+        <!-- Calendar Panel -->
+        <div class="panel calendar-panel">
+          <div class="panel-header">
+            <div class="panel-icon">📅</div>
+            <h2>Calendar</h2>
+          </div>
+          <div class="calendar">
+            <div class="calendar-nav">
+              <button id="prevMonth">‹</button>
+              <span class="calendar-month" id="calendarMonth"></span>
+              <button id="nextMonth">›</button>
+            </div>
+            <div class="calendar-grid" id="calendarGrid"></div>
+          </div>
+          <div class="time-display">
+            <div class="time" id="currentTime"></div>
+            <div class="time-label">Current Time</div>
+          </div>
+        </div>
+
+        <!-- Classes Panel -->
+        <div class="panel classes-panel">
+          <div class="panel-header">
+            <div class="panel-icon">📚</div>
+            <h2>My Classes</h2>
+          </div>
+          <div class="classes-content">
+            <form class="add-class-form" id="addClassForm">
+              <input type="text" class="add-class-input" id="classNameInput" placeholder="Add a class..." maxlength="30">
+              <button type="submit" class="add-class-btn">Add</button>
+            </form>
+            <div class="color-picker" id="colorPicker"></div>
+            <div class="class-list" id="classList"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Todo Panel -->
+      <div class="panel todo-panel">
+        <div class="panel-header">
+          <div class="panel-icon">✓</div>
+          <h2 id="todoTitle">Today's Tasks</h2>
+        </div>
+        <div class="todo-filters" id="todoFilters"></div>
+        <div class="todo-input-wrapper">
+          <form class="todo-input-form" id="todoForm">
+            <div class="todo-input-row">
+              <input type="text" class="todo-input" id="todoInput" placeholder="What needs to be done?" autocomplete="off">
+              <select class="class-select" id="classSelect">
+                <option value="">No class</option>
+              </select>
+            </div>
+            <button type="submit" class="add-btn">Add Task</button>
+          </form>
+        </div>
+        <div class="todo-list" id="todoList"></div>
+      </div>
+
+      <!-- Notepad Panel -->
+      <div class="panel notepad-panel">
+        <div class="panel-header">
+          <div class="panel-icon">📝</div>
+          <h2>Quick Notes</h2>
+        </div>
+        <div class="notepad">
+          <textarea class="notepad-textarea" id="notepad" placeholder="Jot down your thoughts..."></textarea>
+        </div>
+        <div class="notepad-footer">
+          <span class="char-count" id="charCount">0 characters</span>
+          <span class="save-indicator" id="saveIndicator">
+            <span>●</span> Saved
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==================== Class Colors ====================
+    const CLASS_COLORS = [
+      { id: 'blue', color: '#4A90D9', bg: '#E3EEF9', name: 'Blue' },
+      { id: 'purple', color: '#8B5CF6', bg: '#EDE9FE', name: 'Purple' },
+      { id: 'pink', color: '#EC4899', bg: '#FCE7F3', name: 'Pink' },
+      { id: 'red', color: '#DC2626', bg: '#FEE2E2', name: 'Red' },
+      { id: 'orange', color: '#EA580C', bg: '#FFEDD5', name: 'Orange' },
+      { id: 'amber', color: '#D97706', bg: '#FEF3C7', name: 'Amber' },
+      { id: 'green', color: '#16A34A', bg: '#DCFCE7', name: 'Green' },
+      { id: 'teal', color: '#0D9488', bg: '#CCFBF1', name: 'Teal' },
+      { id: 'cyan', color: '#0891B2', bg: '#CFFAFE', name: 'Cyan' },
+      { id: 'slate', color: '#475569', bg: '#E2E8F0', name: 'Slate' },
+    ];
+
+    // ==================== Storage ====================
+    const Storage = {
+      get(key, defaultValue) {
+        const data = localStorage.getItem(key);
+        return data ? JSON.parse(data) : defaultValue;
+      },
+      set(key, value) {
+        localStorage.setItem(key, JSON.stringify(value));
+      }
+    };
+
+    // ==================== Helpers ====================
+    function getDateKey(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `todos_${year}-${month}-${day}`;
+    }
+
+    function formatDateForTitle(date) {
+      const today = new Date();
+      const isToday = date.toDateString() === today.toDateString();
+
+      if (isToday) {
+        return "Today's Tasks";
+      }
+
+      const options = { weekday: 'short', month: 'short', day: 'numeric' };
+      return `Tasks for ${date.toLocaleDateString('en-US', options)}`;
+    }
+
+    function getColorById(colorId) {
+      return CLASS_COLORS.find(c => c.id === colorId) || CLASS_COLORS[0];
+    }
+
+    // ==================== Classes Manager ====================
+    const ClassesManager = {
+      classes: [],
+      selectedColorId: 'blue',
+      onClassesChange: null,
+
+      init() {
+        this.classes = Storage.get('classes', []);
+        this.renderColorPicker();
+        this.render();
+        this.bindEvents();
+      },
+
+      renderColorPicker() {
+        const picker = document.getElementById('colorPicker');
+        picker.innerHTML = CLASS_COLORS.map(c => `
+          <div class="color-option ${c.id === this.selectedColorId ? 'selected' : ''}"
+               style="background: ${c.color}"
+               data-color="${c.id}"
+               title="${c.name}"></div>
+        `).join('');
+      },
+
+      render() {
+        const list = document.getElementById('classList');
+
+        if (this.classes.length === 0) {
+          list.innerHTML = '<div class="no-classes">No classes yet. Add your first class above!</div>';
+        } else {
+          list.innerHTML = this.classes.map((cls, index) => {
+            const color = getColorById(cls.colorId);
+            const count = this.getTaskCount(cls.id);
+            return `
+              <div class="class-item" data-class-id="${cls.id}">
+                <div class="class-color" style="background: ${color.color}"></div>
+                <span class="class-name">${this.escapeHtml(cls.name)}</span>
+                <span class="class-count">${count}</span>
+                <button class="class-delete" data-index="${index}" title="Delete class">×</button>
+              </div>
+            `;
+          }).join('');
+        }
+
+        this.updateClassSelect();
+        if (this.onClassesChange) {
+          this.onClassesChange();
+        }
+      },
+
+      getTaskCount(classId) {
+        // Count tasks for this class across all dates
+        let count = 0;
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key.startsWith('todos_')) {
+            const todos = Storage.get(key, []);
+            count += todos.filter(t => t.classId === classId).length;
+          }
+        }
+        return count;
+      },
+
+      updateClassSelect() {
+        const select = document.getElementById('classSelect');
+        select.innerHTML = '<option value="">No class</option>' +
+          this.classes.map(cls => {
+            const color = getColorById(cls.colorId);
+            return `<option value="${cls.id}">${this.escapeHtml(cls.name)}</option>`;
+          }).join('');
+      },
+
+      bindEvents() {
+        document.getElementById('colorPicker').addEventListener('click', (e) => {
+          const option = e.target.closest('.color-option');
+          if (!option) return;
+
+          this.selectedColorId = option.dataset.color;
+          this.renderColorPicker();
+        });
+
+        document.getElementById('addClassForm').addEventListener('submit', (e) => {
+          e.preventDefault();
+          const input = document.getElementById('classNameInput');
+          const name = input.value.trim();
+
+          if (name) {
+            this.addClass(name);
+            input.value = '';
+          }
+        });
+
+        document.getElementById('classList').addEventListener('click', (e) => {
+          const deleteBtn = e.target.closest('.class-delete');
+          if (deleteBtn) {
+            e.stopPropagation();
+            const index = parseInt(deleteBtn.dataset.index);
+            this.deleteClass(index);
+            return;
+          }
+        });
+      },
+
+      addClass(name) {
+        const id = 'class_' + Date.now();
+        this.classes.push({
+          id,
+          name,
+          colorId: this.selectedColorId
+        });
+        this.save();
+        this.render();
+      },
+
+      deleteClass(index) {
+        this.classes.splice(index, 1);
+        this.save();
+        this.render();
+      },
+
+      getClassById(id) {
+        return this.classes.find(c => c.id === id);
+      },
+
+      save() {
+        Storage.set('classes', this.classes);
+      },
+
+      escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+    };
+
+    // ==================== Calendar ====================
+    const Calendar = {
+      currentDate: new Date(),
+      selectedDate: new Date(),
+      onDateChange: null,
+
+      init() {
+        this.render();
+        this.bindEvents();
+        this.updateHeaderDate();
+        this.startClock();
+      },
+
+      getDateKey(year, month, day) {
+        const m = String(month + 1).padStart(2, '0');
+        const d = String(day).padStart(2, '0');
+        return `todos_${year}-${m}-${d}`;
+      },
+
+      hasTodos(year, month, day) {
+        const key = this.getDateKey(year, month, day);
+        const todos = Storage.get(key, []);
+        return todos.length > 0;
+      },
+
+      render() {
+        const year = this.currentDate.getFullYear();
+        const month = this.currentDate.getMonth();
+
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                           'July', 'August', 'September', 'October', 'November', 'December'];
+
+        document.getElementById('calendarMonth').textContent = `${monthNames[month]} ${year}`;
+
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const startDay = firstDay.getDay();
+        const daysInMonth = lastDay.getDate();
+
+        const prevLastDay = new Date(year, month, 0).getDate();
+
+        const grid = document.getElementById('calendarGrid');
+        grid.innerHTML = '';
+
+        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        dayNames.forEach(day => {
+          const el = document.createElement('div');
+          el.className = 'calendar-day-name';
+          el.textContent = day;
+          grid.appendChild(el);
+        });
+
+        // Previous month days
+        for (let i = startDay - 1; i >= 0; i--) {
+          const el = document.createElement('div');
+          el.className = 'calendar-day other-month';
+          el.textContent = prevLastDay - i;
+          grid.appendChild(el);
+        }
+
+        // Current month days
+        const today = new Date();
+        for (let i = 1; i <= daysInMonth; i++) {
+          const el = document.createElement('div');
+          el.className = 'calendar-day';
+          el.textContent = i;
+
+          if (i === today.getDate() &&
+              month === today.getMonth() &&
+              year === today.getFullYear()) {
+            el.classList.add('today');
+          }
+
+          if (i === this.selectedDate.getDate() &&
+              month === this.selectedDate.getMonth() &&
+              year === this.selectedDate.getFullYear()) {
+            el.classList.add('selected');
+          }
+
+          if (this.hasTodos(year, month, i)) {
+            el.classList.add('has-todos');
+          }
+
+          el.addEventListener('click', () => {
+            this.selectedDate = new Date(year, month, i);
+            this.render();
+            if (this.onDateChange) {
+              this.onDateChange(this.selectedDate);
+            }
+          });
+
+          grid.appendChild(el);
+        }
+
+        // Next month days
+        const totalCells = startDay + daysInMonth;
+        const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+        for (let i = 1; i <= remaining; i++) {
+          const el = document.createElement('div');
+          el.className = 'calendar-day other-month';
+          el.textContent = i;
+          grid.appendChild(el);
+        }
+      },
+
+      bindEvents() {
+        document.getElementById('prevMonth').addEventListener('click', () => {
+          this.currentDate.setMonth(this.currentDate.getMonth() - 1);
+          this.render();
+        });
+
+        document.getElementById('nextMonth').addEventListener('click', () => {
+          this.currentDate.setMonth(this.currentDate.getMonth() + 1);
+          this.render();
+        });
+      },
+
+      updateHeaderDate() {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('headerDate').textContent = new Date().toLocaleDateString('en-US', options);
+      },
+
+      startClock() {
+        const updateTime = () => {
+          const now = new Date();
+          const hours = now.getHours();
+          const minutes = now.getMinutes().toString().padStart(2, '0');
+          const ampm = hours >= 12 ? 'PM' : 'AM';
+          const hour12 = hours % 12 || 12;
+          document.getElementById('currentTime').textContent = `${hour12}:${minutes} ${ampm}`;
+        };
+
+        updateTime();
+        setInterval(updateTime, 1000);
+      }
+    };
+
+    // ==================== Todo List ====================
+    const TodoList = {
+      todos: [],
+      currentDate: new Date(),
+      filterClassId: null,
+
+      init() {
+        this.loadForDate(this.currentDate);
+        this.bindEvents();
+        this.renderFilters();
+      },
+
+      loadForDate(date) {
+        this.currentDate = date;
+        const key = getDateKey(date);
+        this.todos = Storage.get(key, []);
+        this.updateTitle();
+        this.render();
+      },
+
+      updateTitle() {
+        document.getElementById('todoTitle').textContent = formatDateForTitle(this.currentDate);
+      },
+
+      renderFilters() {
+        const filters = document.getElementById('todoFilters');
+        const classes = ClassesManager.classes;
+
+        let html = `<button class="filter-btn ${this.filterClassId === null ? 'active' : ''}" data-filter="">All</button>`;
+
+        classes.forEach(cls => {
+          const color = getColorById(cls.colorId);
+          html += `
+            <button class="filter-btn ${this.filterClassId === cls.id ? 'active' : ''}" data-filter="${cls.id}">
+              <span class="filter-dot" style="background: ${color.color}"></span>
+              ${ClassesManager.escapeHtml(cls.name)}
+            </button>
+          `;
+        });
+
+        filters.innerHTML = html;
+      },
+
+      getFilteredTodos() {
+        if (this.filterClassId === null) {
+          return this.todos;
+        }
+        return this.todos.filter(t => t.classId === this.filterClassId);
+      },
+
+      render() {
+        const list = document.getElementById('todoList');
+        const filteredTodos = this.getFilteredTodos();
+
+        if (filteredTodos.length === 0) {
+          const message = this.filterClassId
+            ? 'No tasks for this class today.'
+            : 'No tasks for this day. Add one above!';
+          list.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon">📚</div>
+              <p>${message}</p>
+            </div>
+          `;
+          return;
+        }
+
+        list.innerHTML = filteredTodos.map((todo, index) => {
+          const realIndex = this.todos.indexOf(todo);
+          const cls = todo.classId ? ClassesManager.getClassById(todo.classId) : null;
+          const color = cls ? getColorById(cls.colorId) : null;
+
+          let classTag = '';
+          if (cls && color) {
+            classTag = `
+              <div class="todo-class-tag" style="background: ${color.bg}; color: ${color.color}">
+                <span class="todo-class-dot" style="background: ${color.color}"></span>
+                ${ClassesManager.escapeHtml(cls.name)}
+              </div>
+            `;
+          }
+
+          return `
+            <div class="todo-item ${todo.completed ? 'completed' : ''} ${todo.highlighted ? 'highlighted' : ''}" data-index="${realIndex}">
+              <div class="todo-checkbox" data-action="toggle"></div>
+              <div class="todo-content">
+                <span class="todo-text">${this.escapeHtml(todo.text)}</span>
+                ${classTag}
+              </div>
+              <div class="todo-actions">
+                <button class="todo-action-btn highlight" data-action="highlight" title="Highlight">★</button>
+                <button class="todo-action-btn edit" data-action="edit" title="Edit">✎</button>
+                <button class="todo-action-btn delete" data-action="delete" title="Delete">×</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      },
+
+      bindEvents() {
+        document.getElementById('todoForm').addEventListener('submit', (e) => {
+          e.preventDefault();
+          const input = document.getElementById('todoInput');
+          const classSelect = document.getElementById('classSelect');
+          const text = input.value.trim();
+
+          if (text) {
+            this.add(text, classSelect.value || null);
+            input.value = '';
+          }
+        });
+
+        document.getElementById('todoFilters').addEventListener('click', (e) => {
+          const btn = e.target.closest('.filter-btn');
+          if (!btn) return;
+
+          const filter = btn.dataset.filter;
+          this.filterClassId = filter || null;
+          this.renderFilters();
+          this.render();
+        });
+
+        document.getElementById('todoList').addEventListener('click', (e) => {
+          const item = e.target.closest('.todo-item');
+          if (!item) return;
+
+          const index = parseInt(item.dataset.index);
+          const action = e.target.dataset.action || e.target.closest('[data-action]')?.dataset.action;
+
+          switch (action) {
+            case 'toggle':
+              this.toggle(index);
+              break;
+            case 'highlight':
+              this.highlight(index);
+              break;
+            case 'edit':
+              this.startEdit(index, item);
+              break;
+            case 'delete':
+              this.delete(index);
+              break;
+          }
+        });
+      },
+
+      add(text, classId) {
+        this.todos.unshift({
+          text,
+          classId,
+          completed: false,
+          highlighted: false,
+          createdAt: Date.now()
+        });
+        this.save();
+        this.render();
+        Calendar.render();
+        ClassesManager.render();
+      },
+
+      toggle(index) {
+        this.todos[index].completed = !this.todos[index].completed;
+        this.save();
+        this.render();
+      },
+
+      highlight(index) {
+        this.todos[index].highlighted = !this.todos[index].highlighted;
+        this.save();
+        this.render();
+      },
+
+      startEdit(index, item) {
+        const textEl = item.querySelector('.todo-text');
+        const currentText = this.todos[index].text;
+
+        textEl.outerHTML = `<input type="text" class="todo-text-input" value="${this.escapeHtml(currentText)}" data-index="${index}">`;
+
+        const input = item.querySelector('.todo-text-input');
+        input.focus();
+        input.select();
+
+        const finishEdit = () => {
+          const newText = input.value.trim();
+          if (newText && newText !== currentText) {
+            this.todos[index].text = newText;
+            this.save();
+          }
+          this.render();
+        };
+
+        input.addEventListener('blur', finishEdit);
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            finishEdit();
+          } else if (e.key === 'Escape') {
+            this.render();
+          }
+        });
+      },
+
+      delete(index) {
+        this.todos.splice(index, 1);
+        this.save();
+        this.render();
+        Calendar.render();
+        ClassesManager.render();
+      },
+
+      save() {
+        const key = getDateKey(this.currentDate);
+        Storage.set(key, this.todos);
+      },
+
+      escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+    };
+
+    // ==================== Notepad ====================
+    const Notepad = {
+      saveTimeout: null,
+
+      init() {
+        const textarea = document.getElementById('notepad');
+        textarea.value = Storage.get('notepad', '');
+        this.updateCharCount();
+        this.bindEvents();
+      },
+
+      bindEvents() {
+        const textarea = document.getElementById('notepad');
+
+        textarea.addEventListener('input', () => {
+          this.updateCharCount();
+          this.scheduleSave();
+        });
+      },
+
+      updateCharCount() {
+        const count = document.getElementById('notepad').value.length;
+        document.getElementById('charCount').textContent = `${count} character${count !== 1 ? 's' : ''}`;
+      },
+
+      scheduleSave() {
+        const indicator = document.getElementById('saveIndicator');
+        indicator.innerHTML = '<span style="color: var(--amber)">●</span> Saving...';
+
+        clearTimeout(this.saveTimeout);
+        this.saveTimeout = setTimeout(() => {
+          Storage.set('notepad', document.getElementById('notepad').value);
+          indicator.innerHTML = '<span>●</span> Saved';
+        }, 500);
+      }
+    };
+
+    // ==================== Initialize ====================
+    document.addEventListener('DOMContentLoaded', () => {
+      ClassesManager.init();
+      Calendar.init();
+      TodoList.init();
+      Notepad.init();
+
+      // Connect calendar to todo list
+      Calendar.onDateChange = (date) => {
+        TodoList.loadForDate(date);
+      };
+
+      // Update filters when classes change
+      ClassesManager.onClassesChange = () => {
+        TodoList.renderFilters();
+      };
+    });
+  </script>
+</body>
+</html>
